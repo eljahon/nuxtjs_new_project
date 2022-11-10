@@ -183,13 +183,13 @@ export default {
           route: '/online-consultation',
           current: false
         },
-        {
-          id: 2,
-          icon: 'bx bx-trending-up',
-          name: 'text.tradingFloor',
-          route: '/trading',
-          current: false
-        },
+        // {
+        //   id: 2,
+        //   icon: 'bx bx-trending-up',
+        //   name: 'text.tradingFloor',
+        //   route: '/trading',
+        //   current: false
+        // },
         { id: 3, icon: 'bx bx-news', name: 'text.lastNews', route: '/news', current: false },
         { id: 4, icon: 'bx bx-world', name: 'text.usefulInformation', route: '/useful-informatio', current: false },
         { id: 5, icon: 'bx bx-money', name: 'text.prices', route: '/prices', current: false },

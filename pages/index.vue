@@ -322,8 +322,8 @@ export default {
         link: '/'
       },
         {
-          name: this.$t("text.tradingFloor"),
-          link: '/trading'
+          name: this.$t("text.onlineConsultation"),
+          link: '/online-consultation'
         },
         {
           name: this.$t("text.lastNews"),
@@ -332,6 +332,12 @@ export default {
         {
           name: this.$t("text.usefulInformation"),
           link: '/useful-informatio'
+        },{
+          name: this.$t("text.prices"),
+          link: '/prices'
+        },{
+          name: this.$t("text.videoLessons"),
+          link: '/videos'
         },
         ],
       query: {

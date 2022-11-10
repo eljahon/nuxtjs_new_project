@@ -9,7 +9,7 @@
               <div class="grid grid-cols-3">
                 <div class="">
                   <img v-if="info.thumbnail || info.mainphoto" :src="$tools.getFileUrl(info.thumbnail ? info.thumbnail : info.mainphoto)" class="w-40 h-28 object-cover shadow-lg rounded-md">
-                  <img v-else-if="info.gallery.length > 0" :src="$tools.getFileUrl(info.gallery[0].url)" class="w-40 h-28 object-cover shadow-lg rounded-md">
+                  <img v-else-if="info.gallery.length" :src="$tools.getFileUrl(info.gallery[0].url)" class="w-40 h-28 object-cover shadow-lg rounded-md">
                   <img
                     v-else
                     class="w-40 h-28 object-cover shadow-lg rounded-md"
@@ -20,9 +20,9 @@
                   <h3 class="text-gray-600 line-clamp-2 font-medium text-sm">
                     {{ info.title }}
                   </h3>
-                  <div v-if="info.consultant !== null" class="mt-4 flex items-center">
+                  <div v-if="info.consultant.userinfo" class="mt-4 flex items-center">
                     <div class="flex-shrink-0">
-                      <img v-if="info.consultant.userinfo.avatar === null || info.consultant.userinfo.avatar===undefined" src="https://silkozari.com/web/images/miscellaneous/avatar.jpg" class="h-10 w-10 rounded-full">
+                      <img v-if=" info.consultant && info.consultant.userinfo && info.consultant.userinfo.avatar" src="https://silkozari.com/web/images/miscellaneous/avatar.jpg" class="h-10 w-10 rounded-full">
                       <img v-else class="h-10 w-10 object-cover rounded-full" :src="$tools.getFileUrl(info.consultant.userinfo.avatar)">
                     </div>
                     <div class="ml-3">
@@ -68,7 +68,14 @@ export default {
   },
 
   methods: {
-
+checkNullImg (item) {
+  let _imgUrl = item ?? false;
+  if (_imgUrl) {
+    return false
+  } else {
+    return  true
+  }
+}
   }
 }
 </script>
