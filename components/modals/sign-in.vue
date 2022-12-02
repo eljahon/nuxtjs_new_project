@@ -103,10 +103,11 @@
 </template>
 <script>
 // import Socials from '~/components/core/Socials.vue'
-import signUpModal from '~/components/modals/sign-up'
+import signUp from "@/components/modals/sign-up";
 // import forgotPassword from '~/modals/forgot-password.vue'
 // import appConfig from '~/app.config'
-// import confirmCodeModal from '~/modals/confirm-code'
+import success from "@/components/modals/success";
+import confirmCodeModal from '@/components/modals/confirm-code'
 export default {
   page: {
     title: 'Log in',
@@ -145,28 +146,30 @@ export default {
   created () {},
   methods: {
     async tryToLogIn () {
+     // await this.$snotify.success('Successfully Logged In')
       if (this.auth.identifier.includes('+') > 0) {
         this.auth.identifier = this.auth.identifier.substring(1)
       }
       this.authError = ''
       this.loading = true
       if (this.isEmail) {
-        this.$snotify.info('Logging in...')
         await this.$auth.loginWith('local', {
           data: this.auth
         }).then(async (res) => {
-          localStorage.setItem('local', 'Bearer ' + res.data.jwt)
-          await this.$auth.setToken('local', 'Bearer ' + res.data.jwt)
-          // await this.$auth.setRefreshToken('local', res.data.refresh)
-          await this.$axios.setHeader('Authorization', 'Bearer ' + res.data.jwt)
-          await this.$auth.ctx.app.$axios.setHeader('Authorization', 'Bearer ' + res.data.jwt)
-          localStorage.setItem('user_info', JSON.stringify(res.data.user))
-          await this.$auth.setUser(res.data.user)
-          await this.$snotify.success('Successfully Logged In')
-          this.loading = false
+          this.$auth.setUserToken(res.jwt);
+          const user_info = await this.$axios.get('users/me', {params: {populate: "*"}});
+          await this.$auth.setUser(user_info)
           this.onClose()
+          // console.log(this.$auth)
+          this.$cookies.set('user_info', res.user);
+          // this.success(user_info)
+          // console.log(user_info, this.$cookies.getAll())
+          this.$router.push({path: this.localePath('/')})
+
+          this.loading = false
+
         }).catch((e) => {
-          this.authError = e.response.data.data[0].messages[0].message
+          // this.authError = e.response.data.data[0].messages[0].message
           this.loading = false
         })
       } else {
@@ -174,7 +177,6 @@ export default {
           .post('/users-permissions/login-verify-otp', { phone: this.auth.identifier })
           .then((res) => {
             this.loading = false
-            this.confirmCode({ username: this.auth.identifier, isLogin: true, isOtpSuccess: null })
           })
           .catch((e) => {
             this.openSignUp()
@@ -185,30 +187,30 @@ export default {
     },
     confirmCode (user) {
       this.$emit('close')
-      // this.$modal.show(
-      //   confirmCodeModal,
-      //   { user },
-      //   {
-      //     height: 'auto',
-      //     maxWidth: 400,
-      //     width: window.innerWidth <= 400 ? window.innerWidth - 10 : 400,
-      //     acrollable: true
-      //   }
-      // )
+      this.$modal.show(
+        confirmCodeModal,
+        { user },
+        {
+          height: 'auto',
+          maxWidth: 400,
+          width: window.innerWidth <= 400 ? window.innerWidth - 10 : 400,
+          acrollable: true
+        }
+      )
       this.$root.$once('confirm-code', (item) => {})
     },
     openSignUp () {
       this.$emit('close')
-      // this.$modal.show(
-      //   signUpModal,
-      //   { status: 'sign-up' },
-      //   {
-      //     height: 'auto',
-      //     maxWidth: 400,
-      //     width: window.innerWidth <= 350 ? window.innerWidth - 10 : 350,
-      //     scrollable: true
-      //   }
-      // )
+      this.$modal.show(
+        signUp,
+        { status: 'sign-up' },
+        {
+          height: 'auto',
+          maxWidth: 400,
+          width: window.innerWidth <= 350 ? window.innerWidth - 10 : 350,
+          scrollable: true
+        }
+      )
     },
     openForgotPassword () {
       this.$emit('close')
@@ -226,6 +228,18 @@ export default {
     onClose (e) {
       this.$emit('close')
       this.$root.$emit('sign-in', e)
+    },
+    success (user) {
+      this.$modal.show(
+        success,
+        { user },
+        {
+          height: 'auto',
+          maxWidth: 400,
+          width: window.innerWidth <= 400 ? window.innerWidth - 10 : 400,
+          acrollable: true
+        }
+      )
     }
   }
 }

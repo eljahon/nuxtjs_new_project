@@ -32,58 +32,75 @@ export default {
     { src: "~/plugins/swaper.js", defer: true },
     { src: "~/plugins/vue-modal", mode: "client", defer: true },
     { src: "~/plugins/client-libraries", mode: "client", defer: true },
-    { src: "~/plugins/vue-validate", mode: "client", defer: true },
+    { src: "~/plugins/vee-validate", mode: "client", defer: true },
+    { src: "~/plugins/other-libraries", mode: "client", defer: true },
+    { src: "~/plugins/socket.io",  ssr: false },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
   loading: false,
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: ["@nuxtjs/dotenv"],
-
-  // Modules: https://go.nuxtjs.dev/config-modules
+  buildModules: ["@nuxtjs/dotenv",  'nuxt-build-optimisations'],
   modules: [
     "@nuxtjs/i18n",
     "@nuxtjs/axios",
     "@nuxtjs/tailwindcss",
     "@nuxtjs/dayjs",
-    "@nuxtjs/auth"
+    '@nuxtjs/auth-next',
+    'cookie-universal-nuxt',
+    // 'nuxt-socket-io',
+    ['cookie-universal-nuxt', { alias: 'cookiz' }]
   ],
+  // io: {
+  //   sockets: [{
+  //     name: 'home',
+  //     url: 'https://testapi.agromart.uz',
+  //     vuex: {
+  //       actions: [{ message: 'FORMAT_MESSAGE' }]
+  //       // emitBacks: ['message']
+  //     },
+  //   }],
+  //   server: {
+  //     server: {
+  //       // @ts-ignore
+  //       cors: {
+  //         credentials: true, // "Configures the Access-Control-Allow-Credentials CORS header. Set to true to pass the header, otherwise it is omitted."
+  //         origin: ['https://nuxt-socket-io.netlify.app'] // Array of whitelisted origin(s)
+  //       }
+  //     }
+  //   },
+  //   namespaces: {
+  //     '/index': {
+  //       emitters: ['joined', 'join+textMgs -->message'],
+  //       listeners: ['message -->message']
+  //     }
+  //   }
+  // },
   dayjs: {
     locales: ["en", "ja"],
     defaultLocale: "en",
     plugins: [], // Your Day.js plugin
   },
   auth: {
-    localStorage: false,
-    cookie: {
-      expires: 7
-    },
     strategies: {
       local: {
         token: {
-          property: 'token',
-          maxAge: 30 * 24 * 60 * 60,
+          property: 'jwt',
+          // maxAge: 30 * 24 * 60 * 60,
           global: true,
-          type: 'Bearer'
+          // type: 'Bearer'
         },
-        // user: {
-        //   property: 'user',
-        //   autoFetch: true
-        // },
+        user: {
+          property: false,
+          autoFetch: true
+        },
         endpoints: {
           login: { url: '/auth/local', method: 'post' },
-          // refresh: { url: '/auth/token/refresh', method: 'post' },
-          user: false,
-          logout: false
-          // tokenRequired: true,
-          // tokenType: 'Bearer',
-          // facebook: {
-          //   client_id: 'your facebook app id',
-          //   userinfo_endpoint: 'https://graph.facebook.com/v2.12/me?fields=about,name,picture{url},email',
-          //   scope: ['public_profile', 'email']
-          // },
-          // google: { client_id: 'your gcloud oauth app client id' }
+          user: {url: '/users/me', method:'get'},
+          logout: false,
+          valueOftokenRequired: false,
+          tokenType: false,
         },
         redirect: {
           login: '/',
@@ -97,7 +114,7 @@ export default {
   i18n: i18n,
   router: {
     // mode: 'hash',
-    // middleware: ['auth'],
+    middleware: ['auth'],
     prefetchLinks: false
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
@@ -106,6 +123,9 @@ export default {
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
       }
-    }
+    },
+    parallel: false,
+    cache: false,
+    hardSource: false
   },
 };

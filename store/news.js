@@ -48,7 +48,7 @@ export const actions = {
     const {params, id} =payload;
     try {
       const data= await this.$axios.get('news/'+id, {params: {...params}})
-      console.log(data)
+      // console.log(data)
       commit("SET_NEWS_BY_ID", data);
       return {data: data}
       // console.log(data, 'new data==>>')

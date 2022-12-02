@@ -105,7 +105,7 @@
             <client-only>
             <langswitcher class="ml-4 lg:block hidden" />
             </client-only>
-            <div v-if="isLoggedIn" class="ml-3 relative">
+            <div v-if="$store.state.auth.loggedIn" class="ml-3 relative">
               <div class="flex items-center justify-end">
                 <button
                   id="user-menu-button"
@@ -130,8 +130,9 @@
                 </button>
               </div>
               <div
+                style="z-index: 9999"
                 v-show="isProfileOpened"
-                class="z-20 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="user-menu-button"
@@ -139,7 +140,7 @@
               >
                 <div
                   class="block font-medium hover:bg-gray-100 px-4 py-2 text-sm text-gray-600 cursor-pointer"
-                  @click="toUserWork({ path: localePath('/my-profile') })"
+                  @click="toUserWork('/my-profile')"
                 >
                   {{
                     `${currentUser.name ? currentUser.name : ""} ${
@@ -151,25 +152,26 @@
                     >ID: {{ currentUser.id }}</span
                   >
                 </div>
+<!--                <div-->
+<!--                  class="block font-medium px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 cursor-pointer"-->
+<!--                  @click="toUserWork({ path: localePath('/my-products') })"-->
+<!--                >-->
+<!--                  {{ $t("word.ads") }}-->
+<!--                </div>-->
                 <div
                   class="block font-medium px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 cursor-pointer"
-                  @click="toUserWork({ path: localePath('/my-products') })"
-                >
-                  {{ $t("word.ads") }}
-                </div>
-                <div
-                  class="block font-medium px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 cursor-pointer"
-                  @click="toUserWork({ path: localePath('/chats') })"
+                  @click="toUserWork('/chats')"
                 >
                   {{ $t("text.myConsultation") }}
                 </div>
+<!--                <div-->
+<!--                  class="block font-medium px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 cursor-pointer"-->
+<!--                  @click="toUserWork('/my-chats')"-->
+<!--                >-->
+<!--                  {{ $t("text.myChats") }}-->
+<!--                </div>-->
                 <div
-                  class="block font-medium px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 cursor-pointer"
-                  @click="toUserWork({ path: localePath('/my-chats') })"
-                >
-                  {{ $t("text.myChats") }}
-                </div>
-                <div
+                  @click="setting"
                   class="block font-medium px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 cursor-pointer"
                 >
                   {{ $t("word.settings") }}
@@ -307,57 +309,102 @@ import { mapGetters, mapState } from "vuex";
 import langswitcher from "~/components/langSwitcher/langswitcher";
 import MobileCategory from "@/components/MobileCategory";
 import telegram from "@/components/modals/telegram";
-import signIn from "@/components/modals/sign-in";
+// import {socket} from "@/plugins/socket.io";
 export default {
   name: "IndexPage",
   components: { "v-footer": Footer, langswitcher },
+  auth: false,
   data() {
     return {
       showUserMenu: false,
       isProfileOpened: false,
-      isLoggedIn: false,
+      socket: null,
       routerList: [
         {
         name: this.$t("text.allSections"),
-        link: '/'
+        link: 'all'
       },
         {
           name: this.$t("text.onlineConsultation"),
-          link: '/online-consultation'
+          link: 'online-consultation'
         },
         {
           name: this.$t("text.lastNews"),
-          link: '/news'
+          link: 'news'
         },
         {
           name: this.$t("text.usefulInformation"),
-          link: '/useful-informatio'
+          link: 'useful-informatio'
         },{
           name: this.$t("text.prices"),
-          link: '/prices'
+          link: 'prices'
         },{
           name: this.$t("text.videoLessons"),
-          link: '/videos'
+          link: 'videos'
         },
         ],
       query: {
         filter: "",
-        type: "/",
+        type: "all",
       },
     };
   },
   computed: {
-    // ...mapState({
-    //   isLoggedIn: (state) => state.auth.loggedIn,
-    //   currentUser: (state) => state.auth.user,
-    //   userConnection: (state) => state.socket.userConnection,
-    //   userConnectionStatus: (state) => state.socket.userConnectionStatus,
-    // }),
+    ...mapState({
+      currentUser: (state) => state.auth.user,
+      userConnection: (state) => state.socket.userConnection,
+      userConnectionStatus: (state) => state.socket.userConnectionStatus,
+    }),
   },
   mounted () {
-    this.openTelegramModal()
+    if (this.$route.path === '/') {
+      this.openTelegramModal();
+    }
+    // console.log(this.$socket,this,'===>>')
+    // this.socket = socket;
+    // console.log(this)
+    // socket.on('joined', (res) => {
+    // })
+    // socket.on('left', (res) => {
+    // })
+    // socket.on('joinedRoom', (res) => {
+    //   console.log('Joined to room: ', res)
+    // })
+    // socket.on('leftRoom', (res) => {
+    //   console.log('Left from room:', res)
+    // })
+    // socket.on('message', (res) => {
+    //   console.log('Page Received Message Front: ', res)
+    //   if (res.type === 'chat') {
+    //     this.getMessages()
+    //   } else if (res.type === 'room') {
+    //     this.getRooms(res.data)
+    //   }
+    // })
+    // socket.on('finishedChat', (res) => {
+    //   this.$store.dispatch('finishedChatId', res)
+    //   console.log('Finished chat id: ', res)
+    // })
+    // this.$bridge.$on('join_room', (message) => {
+    //   console.log('Join room: ', message)
+    //   this.joinToRoom(message)
+    // })
+    // this.$bridge.$on('join_chat', (message) => {
+    //   console.log('Join chat: ', message)
+    //   this.joinToChat(message)
+    // })
+    // if (this.$auth.user && Object.keys(this.$auth.user).length > 0) {
+    //   this.$bridge.$emit('join_chat', {
+    //     username: this.$auth.user.username,
+    //     user_id: this.$auth.user.id,
+    //   })
+    // }
   },
   methods: {
+    setting () {
+      this.$router.push({path: this.localePath('/my-profile/settings')})
+     this.isProfileOpened = false
+    },
     openTelegramModal () {
       this.$modal.show(
         telegram,
@@ -373,32 +420,14 @@ export default {
       //   // this.fetchSeason()
       // })
     },
-    signIn() {
-      this.$modal.show(
-        signIn,
-        { status: "sign-in" },
-        {
-          height: "auto",
-          maxWidth: 400,
-          width: window.innerWidth <= 350 ? window.innerWidth - 10 : 350,
-          acrollable: true,
-        }
-      )
+    openProfile() {
+      this.isProfileOpened = !this.isProfileOpened;
     },
-      // this.$root.$once('user-change-modal', (item) => {
-      //   console.log(item)
-      // })
+    signIn() {
+      this.$router.push({path: this.localePath('/login')})
+    },
     signUp() {
-      // this.$modal.show(
-      //   // signUpModal,
-      //   { status: "sign-up" },
-      //   {
-      //     height: "auto",
-      //     maxWidth: 400,
-      //     width: window.innerWidth <= 350 ? window.innerWidth - 10 : 350,
-      //     acrollable: true,
-      //   }
-      // );
+      this.$router.push({path: this.localePath('/register')})
     },
     openMobileMenu() {
         this.$showPanel({
@@ -407,10 +436,100 @@ export default {
           width: (window.innerWidth * 3) / 4,
         });
     },
+    searching() {
+      if (this.query.filter && this.query.filter.length >= 3) {
+        this.$router.push({
+          path: this.localePath("/filter"),
+          query: this.query,
+        });
+      }
+    },
+    async logOut() {
+      this.isProfileOpened = !this.isProfileOpened;
+      await localStorage.clear();
+      await this.$cookies.remove('user_info');
+      await this.$auth.logout();
+      await this.$router.push({path: this.localePath('/')})
+    },
+    toUserWork(data) {
+      this.isProfileOpened = !this.isProfileOpened;
+      this.$router.push({
+        path: this.localePath(data),
+      });
+    },
+    joinToChat() {
+      const message = this.$cookies.get('user_info');
+      this.socket.emit(
+        'join',
+        {
+          username: message.username,
+          user_id: message.id,
+        }
+      )
+    },
+    joinToRoom() {
+      const message = this.$cookies.get('user_info');
+      this.socket.emit(
+        'joinRoom',
+        {
+          username: message.username,
+          room: message.id,
+        },
+        ({ res, rej }) => {
+          if (res) {
+            if (this.$route.query.room_id !== 'new') {
+              this.getMessages()
+            }
+          } else {
+            console.error(rej)
+          }
+        }
+      )
+    },
+    getRooms(room) {
+      if (room.id === parseInt(this.$route.query.room_id)) {
+        this.$bridge.$emit('room_changed')
+      }
+      if (this.$auth.user.role.id === 4) {
+        this.$store
+          .dispatch('getChatrooms', {
+            populate: '*',
+            'filters[$or][0][consultant][id]': this.$auth.user.id,
+            'filters[$and][0][isCompleted][$ne]': true,
+            'sort[0][createdAt]': 'DESC',
+          })
+          .then((res) => {
+            this.$store.dispatch('setActiveRooms', res)
+          })
+      } else {
+        this.$store
+          .dispatch('getChatrooms', {
+            populate: '*',
+            'filters[$or][0][user][id]': this.$auth.user.id,
+            // 'filters[$and][0][isCompleted][$ne]': true,
+            'filters[$and][0][rate][$null]': true,
+            'sort[0][createdAt]': 'DESC',
+          })
+          .then((res) => {
+            this.$store.dispatch('setActiveRooms', res)
+          })
+      }
+    },
+    getMessages() {
+      this.$store
+        .dispatch('getChatmessages', {
+          populate: '*',
+          'filters[$and][0][chatroom][id]': this.$route.query.room_id,
+        })
+        .then((res) => {
+          console.log('Chat messages: ', res)
+          // this.$store.dispatch('setMessage', res)
+        })
+    },
   },
   watch: {
     'query.type': function (value) {
-      this.$router.push({path: this.localePath(value)})
+      this.query.type = value
     }
   }
 };

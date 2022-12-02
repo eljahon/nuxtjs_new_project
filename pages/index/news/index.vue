@@ -72,7 +72,7 @@
     import News from '~/components/news/news.vue'
     import mobileCategory from "@/components/mobile-menu/MoblieMenu";
     export default {
-      // auth: false,
+      auth: false,
       components: {
         News
       },

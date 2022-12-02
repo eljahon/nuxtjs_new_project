@@ -288,10 +288,10 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
-import termsOfService from './terms-of-service.vue'
+import termsOfService from './terms-of-service'
 // import Socials from '~/components/core/Socials.vue'
 import signInModal from '~/components/modals/sign-in'
-// import confirmCodeModal from '~/modals/confirm-code'
+import confirmCodeModal from '~/components/modals/confirm-code'
 export default {
   components: {
     // Socials
@@ -352,7 +352,7 @@ export default {
       }
       await this.$axios.post('/auth/local/register', _user).then(async (data) => {
         if (this.isEmail) {
-          this.$snotify.info('Logging in...')
+          // this.$snotify.info('Logging in...')
           console.log(this.user, _user)
           await this.$auth.loginWith('local', {
             data: { identifier: _user.email, password: _user.password }

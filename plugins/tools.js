@@ -18,6 +18,7 @@ const tools = {
     }).replace(/\s+/g, '')
   },
   getFileUrl(name) {
+    if (name === undefined) return false
     if (name) {
       if (name && name.includes("https://")) {
         return name;

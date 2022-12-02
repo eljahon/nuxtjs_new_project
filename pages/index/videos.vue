@@ -11,18 +11,17 @@
        <div v-else class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-4 gap-4">
          <div v-for="(video, index) in $store.state.videos.videosList" :key="index" class="h-72 relative border shadow-md rounded-md">
            <div class="container h-auto cursor-pointer w-full">
-             <!-- <img
-               :src="video.image ? video.image : 'https://www.pinupacc.com/images/dummy.png'"
-               class="w-full h-48 object-cover"
-               @click="openVideo(video)"
-             > -->
              <iframe
+               v-if="checkVideoUrl(video.video_path)"
                loading="lazy"
                :src="video.video_path"
                frameborder="0"
                allowfullscreen
                class="responsive-iframe rounded-md"
              />
+             <video v-else controls class="responsive-iframe rounded-md">
+               <source :src="video.video_path" type="video/mp4">
+             </video>
            </div>
            <p class="text-gray-700 font-medium absolute lg:bottom-2 bottom-3 inset-x-3 line-clamp-2 text-base">
              {{ video.title}}
@@ -61,6 +60,13 @@ export default {
     }
   },
   methods: {
+    checkVideoUrl (item) {
+      if (item.includes('admin.agsat.uz')) {
+        return false;
+      } else {
+        return  true
+      }
+    },
     pageChanged (page) {
       this.loading  = true;
       this.$router.push({path: this.localePath('/videos'), query: {page: page}})
@@ -95,76 +101,6 @@ export default {
       console.log(err)
     }
   }
-  // computed: {
-  //   pagination () {
-  //     return this.$store.state.crud.video.pagination
-  //   }
-  // },
-  // watch: {
-  //   '$route.query.offset' () {
-  //     if (this.$route.query.offset) { this.fetchData(this.$route.query) }
-  //   },
-  //   '$route.query.category_id' () {
-  //     if (this.$route.query.category_id) { this.fetchData(this.$route.query) }
-  //   }
-  // },
-  // mounted () {
-  //   this.fetchData(Object.keys(this.$route.query).length > 0
-  //     ? {
-  //       category_id: this.$route.query.category_id,
-  //       limit: this.$route.query.limit,
-  //       offset: this.$route.query.offset
-  //     }
-  //     : {
-  //       category_id: 'all',
-  //       limit: this.pagination.limit,
-  //       offset: this.pagination.page
-  //     })
-  // },
-  // methods: {
-  //   pageChanged (offset) {
-  //     this.$router.push({
-  //       path: this.localePath(this.$route.query.path),
-  //       query: this.setQuery(this.$route.query, offset)
-  //     })
-  //   },
-  //   setQuery (query, offset) {
-  //     if (query.category_id) {
-  //       return {
-  //         category_id: query.category_id,
-  //         limit: query.limit ? query.limit : this.pagination.limit,
-  //         offset
-  //       }
-  //     }
-  //     return {
-  //       limit: query.limit ? query.limit : this.pagination.limit,
-  //       offset
-  //     }
-  //   },
-  //   async fetchData (query) {
-  //     await this.$store.dispatch('crud/video/getVideo',
-  //       {
-  //         _sort: 'created_at:DESC',
-  //         '_where[0][category.id]': query.category_id !== 'all' ? query.category_id : null,
-  //         _limit: query.limit,
-  //         _start: (query.offset - 1) * query.limit
-  //       }).then((res) => {
-  //       this.videos = res
-  //     })
-  //   },
-  //   openVideo (video) {
-  //     this.$modal.show(
-  //       videosModal,
-  //       { data: video },
-  //       {
-  //         height: 500,
-  //         maxWidth: 800,
-  //         width: window.innerWidth <= 800 ? window.innerWidth - 20 : 800,
-  //         scrollable: true
-  //       }
-  //     )
-  //   }
-  // }
 }
 </script>
 

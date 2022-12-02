@@ -226,7 +226,7 @@ export default {
         id: this.$route.query.id
       })
         .then(res => {
-          console.log('new by id', res)
+          // console.log('new by id', res)
           this.news = {
             id: res.data.id,
             ...res.data

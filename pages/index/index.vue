@@ -29,7 +29,7 @@
 
 
             <div
-              v-if="$store.state.userFullInfo.userFullInfo.length > 0"
+              v-if="$store.state.userFullInfo.userFullInfo.length"
               :class="$store.state.users.userList.length === 0 ? 'mt-0' : 'lg:mt-3 mt-0'"
               class="col-span-3 h-auto"
             >
@@ -102,11 +102,11 @@
                       <!--                    />-->
                       <!--                    <img class="relative w-full object-cover rounded-md rounded-b-none" src="../../assets/images/banner-2.jpg" alt="Banner image">-->
                     </div>
-                    <div
-                      class="absolute flex text-xs text-light-orange bg-orange-50 bottom-2 p-1 w-32 justify-center right-2 rounded-md"
-                    >
-                      <!--                    {{ $tools.getDate(news[0].created_at) }}-->
-                    </div>
+<!--                    <div-->
+<!--                      class="absolute flex text-xs text-light-orange bg-orange-50 bottom-2 p-1 w-32 justify-center right-2 rounded-md"-->
+<!--                    >-->
+<!--                                          {{ $tools.getDate(news[0].created_at) }}-->
+<!--                    </div>-->
                   </div>
                 </nuxt-link>
                 <div
