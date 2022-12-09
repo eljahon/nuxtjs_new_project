@@ -230,6 +230,9 @@ export default {
     await this.fetchConsultation();
     await this.fetchUserFullInfo();
   },
+  mounted() {
+
+  },
   methods: {
     async fetchNews() {
       await this.$store.dispatch("news/get_news_list", {
@@ -272,7 +275,7 @@ export default {
             role: {
               id: 3,
             },
-            blocked: false
+            blocked: false,
           },
         })
         .then((res) => {

@@ -33,8 +33,12 @@
               <div v-if="consultant.userinfo.consultation_category  !== null" class="text-green-600 text-sm mb-3 mt-2 line-clamp-1">
                 {{ consultant.userinfo.consultation_category.title ? consultant.userinfo.consultation_category.title : '' }}
               </div>
+              <pre v-else class="text-green-600 text-sm mb-3 mt-2 line-clamp-1">
+                {{ consultant.userinfo.consultation_category ? consultant.userinfo.consultation_category.title ?  consultant.userinfo.consultation_category.title : '     ' : ' ' }}
+              </pre>
               <div class="flex items-center mt-2 sm:justify-center justify-start">
                 <button
+                  v-if="$auth.user.id !== 3"
                   type="button"
                   class="
                     p-2
@@ -144,43 +148,44 @@ export default {
       }
     },
     toNewChatRoom (data) {
-      // if (this.isLoggedIn) {
-      //   this.$store.dispatch('crud/chats/room/getRooms', {
-      //     '_where[0][consultantID.id][0]': data.id,
-      //     '_where[0][userID.id][0]': this.currentUser.id,
-      //     '_where[0][isCompleted]': false
-      //   }).then((res) => {
-      //     if (res.length > 0) {
-      //       this.$bridge.$emit('selected_room', { room_id: res[0].id })
-      //       this.$router.push({
-      //         path: this.localePath('/chats'),
-      //         query: { room_id: res[0].id, consultant_id: data.id }
-      //       })
-      //     } else {
-      //       this.$router.push({
-      //         path: this.localePath('/chats'),
-      //         query: { room_id: 'new', consultant_id: data.id }
-      //       })
-      //     }
-      //   })
-      //   // this.$store
-      //   //   .dispatch('crud/chats/room/postRooms', { data: { consultantID: data.id, userID: this.currentUser.id, isCompleted: false } })
-      //   //   .then((res) => {
-      //   //     this.$bridge.$emit('selected_room', { room_id: res.id })
-      //   //     this.$router.push({
-      //   //       path: this.localePath('/chats'),
-      //   //       query: { room_id: res.id, consultant_id: data.id }
-      //   //     })
-      //   //   })
-      // } else {
-      //   this.$router.push({
-      //     path: this.localePath('/login'),
-      //     query: {
-      //       consultantID: data.id,
-      //       from: 'consultant'
-      //     }
-      //   })
-      // }
+      console.log(data,'dta')
+      if (this.$auth.loggedIn) {
+        this.$store.dispatch('chats/getRooms', {
+          populate: '*',
+          filters: {
+            receiver: {
+              id: data.id
+            },
+            sender: {
+              id: this.$auth.user.id
+            },
+            is_completed: {
+              $eq: false
+            }
+          }
+        }).then((res) => {
+          if (res.results.length > 0) {
+            this.$router.push({
+              path: this.localePath('/chats'),
+              query: { room_id: res.results[0].id, consultant_id: data.id }
+            })
+          }
+          else {
+            this.$router.push({
+              path: this.localePath('/chats'),
+              query: { room_id: 'new', consultant_id: data.id }
+            })
+          }
+        })
+      } else {
+        this.$router.push({
+          path: this.localePath('/login'),
+          query: {
+            consultantID: data.id,
+            from: 'consultant'
+          }
+        })
+      }
     },
     // async fetchData (query) {
     //   await this.$store.dispatch('crud/user/getUsers',

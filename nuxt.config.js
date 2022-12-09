@@ -34,6 +34,7 @@ export default {
     { src: "~/plugins/client-libraries", mode: "client", defer: true },
     { src: "~/plugins/vee-validate", mode: "client", defer: true },
     { src: "~/plugins/other-libraries", mode: "client", defer: true },
+    // { src: "~/plugins/directive", mode: "client", defer: true },
     { src: "~/plugins/socket.io",  ssr: false },
   ],
 

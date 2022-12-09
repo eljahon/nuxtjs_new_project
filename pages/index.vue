@@ -357,48 +357,57 @@ export default {
     }),
   },
   mounted () {
+    this.$socket.on('message',  (res,rej) => {
+      console.log('message count ===>>>>>>', res)
+      const {type, status, data} = res;
+      //rooms create
+      if (type === 'room' && status === 'created') {
+        this.$store.dispatch('chats/setActivRoom', {ctx: this, data:data})
+      }
+      // chat message create
+      else if(type === 'chat' && status === 'created') {
+        this.$store.dispatch('chats/setMessage',data)
+      }
+      else if(type === 'chat' && status === 'deleted') {
+        this.$store.dispatch('chats/deletMessage', data)
+      } else  if (type === 'chat' && status === "updated") {
+        this.$store.dispatch('chats/updateMessage', data)
+      }
+    });
+    this.$socket.on('joined', (res) => {
+      console.log(res,'join')
+    })
+    this.$socket.on('joinedRoom', (res)=> {
+      console.log(res)
+    })
+    // this.$socket.on('message',  (res,rej) => {
+    //   console.log('message count ===>>>>>>', res)
+    // });
+    // await this.$socket.on('message', (res, rej) => {
+    //   console.log('message inside chat', res, rej)
+    // })
+    // this.$socket.on('message',  (res,rej) => {
+    //   console.log('message ===>>>>>>', res)
+    //   const {type, status, data} = res;
+    //   //rooms create
+    //   if (type === 'room' && status === 'created') {
+    //     this.$store.dispatch('chats/setActivRoom', {ctx: this, data:data})
+    //   }
+    //   // chat message create
+    //   else if(type === 'chat' && status === 'created') {
+    //     this.$store.dispatch('chats/setMessage',data)
+    //   }
+    //   else if(type === 'chat' && status === 'deleted') {
+    //     this.$store.dispatch('chats/deletMessage', data)
+    //   } else  if (type === 'chat' && status === "updated") {
+    //     this.$store.dispatch('chats/updateMessage', data)
+    //   }
+    // });
     if (this.$route.path === '/') {
       this.openTelegramModal();
-    }
-    // console.log(this.$socket,this,'===>>')
-    // this.socket = socket;
-    // console.log(this)
-    // socket.on('joined', (res) => {
-    // })
-    // socket.on('left', (res) => {
-    // })
-    // socket.on('joinedRoom', (res) => {
-    //   console.log('Joined to room: ', res)
-    // })
-    // socket.on('leftRoom', (res) => {
-    //   console.log('Left from room:', res)
-    // })
-    // socket.on('message', (res) => {
-    //   console.log('Page Received Message Front: ', res)
-    //   if (res.type === 'chat') {
-    //     this.getMessages()
-    //   } else if (res.type === 'room') {
-    //     this.getRooms(res.data)
-    //   }
-    // })
-    // socket.on('finishedChat', (res) => {
-    //   this.$store.dispatch('finishedChatId', res)
-    //   console.log('Finished chat id: ', res)
-    // })
-    // this.$bridge.$on('join_room', (message) => {
-    //   console.log('Join room: ', message)
-    //   this.joinToRoom(message)
-    // })
-    // this.$bridge.$on('join_chat', (message) => {
-    //   console.log('Join chat: ', message)
-    //   this.joinToChat(message)
-    // })
-    // if (this.$auth.user && Object.keys(this.$auth.user).length > 0) {
-    //   this.$bridge.$emit('join_chat', {
-    //     username: this.$auth.user.username,
-    //     user_id: this.$auth.user.id,
-    //   })
-    // }
+    };
+    console.log('this.$auth.user ===>>', this.$auth.user)
+
   },
   methods: {
     setting () {

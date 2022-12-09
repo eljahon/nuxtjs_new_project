@@ -22,14 +22,12 @@
                     `${consultant.userinfo.name ? consultant.userinfo.name : ''} ${consultant.userinfo.surname ? consultant.userinfo.surname : ''}`
                   }}</span>
               </div>
-<!--              <span v-if="consultant.userinfo" class="text-sm text-gray-600">{{-->
-<!--                  consultant.userinfo.name-->
-<!--                }}</span>-->
             </div>
           </div>
         </div>
         <div
           id="messages"
+          ref="chat"
           class="
             flex flex-col
             space-y-4
@@ -39,101 +37,13 @@
             scrolling-touch
           "
         >
-          <div v-for="(msg, index) in $store.state.chats.message" :key="index" class="chat-message">
-<!--            {{msg}}-->
-            <div
-              v-if="msg.sender && msg.sender.id === $auth.user.id"
-              class="flex items-end justify-end"
-            >
-              <div
-                class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end"
-                @click.prevent.stop="handleClick($event, msg)"
-              >
 
-                <div
-                  class="
-                    px-4
-                    py-2
-                    rounded-lg
-                    inline-block
-                    rounded-br-none
-                    text-gray-600 text-sm
-                    bg-green-100
-                  "
-                >
-                  <div class="bg-indigo-300 mb-1">
-                    <img
-                      v-if="msg.file_url"
-                      class="object-cover h-48 w-96"
-                      :src="`${$tools.getFileUrl(msg.filepath)}`"
-                    />
-                  </div>
-                  <span class="">{{ msg.text }}</span>
-                </div>
-                <span class="w-full flex justify-between"><sub>{{$dayjs(msg.createdAt).format('HH:mm')}}</sub>
-                <sub v-if="checkDay(msg.createdAt)">{{$dayjs(msg.createdAt).format('DD:MM:YYYY')}}</sub></span>
-              </div>
-              <img
-                :src="
-                  msg.sender && msg.sender.avatar
-                    ? $tools.getFileUrl(msg.sender.avatar)
-                    : require('/assets/images/person/avatar.jpg')
-                "
-                @error="require('/assets/images/person/avatar.jpg')"
-                alt="My profile"
-                class="w-6 h-6 rounded-full order-2"
-              />
-            </div>
-            <div v-else class="flex items-end">
-              <div
-                class="
-                  flex flex-col
-                  space-y-2
-                  text-xs
-                  max-w-xs
-                  mx-2
-                  order-2
-                  items-start
-                  bg-gray-300
-                  rounded-t-lg rounded-r-lg
-                "
-              >
-                <div
-                  class="
-                    px-4
-                    py-2
-                    rounded-lg
-                    inline-block
-                    rounded-bl-none
-                    text-gray-600
-                    bg-orange-50
-                  "
-                >
-                  <div class="bg-indigo-300 mb-1">
-                    <img
-                      v-if="msg.filepath"
-                      class="object-cover h-48 w-96"
-                      :src="`${$tools.getFileUrl(msg.filepath)}`"
-                    />
-                  </div>
-                  <span>{{ msg.text }} <sub>{{$dayjs(msg.createdAt).format('DD:MM:YYYY HH:mm')}}</sub></span>
-                </div>
-              </div>
-              <img
-                :src="
-                  msg.sender && msg.sender.avatar
-                    ? $tools.getFileUrl(msg.sender.avatar)
-                    : require('/assets/images/person/avatar.jpg')
-                "
-                @error="require('/assets/images/person/avatar.jpg')"
-                alt="My profile"
-                class="w-6 h-6 rounded-full order-1"
-              />
-            </div>
-          </div>
-          <div class="chat-message"></div>
+          <chat-message-list
+            :messages="messages"
+            @handeleClick="handleClick"
+          />
+<!--          <main-loading v-else/>-->
         </div>
-<!--        !currentRoom.isCompleted-->
         <div
           v-if="$route.query.room_id"
           class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0"
@@ -142,7 +52,7 @@
             <textarea
               v-model="message.text"
               :rows="1"
-              :placeholder="$t('write-a-message')"
+              :placeholder="$t('word.write')"
               class="
                 w-full
                 focus:outline-none focus:border-green-300
@@ -159,7 +69,6 @@
             />
             <div class="absolute right-0 items-center inset-y-0 flex">
               <button
-                v-if="currentUser.role && currentUser.role.id === 3"
                 type="button"
                 class="
                   inline-flex
@@ -288,7 +197,7 @@
           </div>
         </div>
         <div
-          v-else-if="!currentRoom.rate && currentUser.role.id !== 4"
+          v-else-if="!currentRoom.rate && currentUser.role.id !== 3"
           class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0"
         >
           <div class="flex items-center justify-between">
@@ -323,22 +232,8 @@
             </div>
           </div>
         </div>
-<!--        <div class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">-->
-<!--          <div class="align-middle text-center">-->
-<!--            <span class="rounded-md py-1 px-2 bg-green-200 text-gray-600">-->
-<!--              {{ $t('chat-room-closed') }}-->
-<!--            </span>-->
-<!--          </div>-->
-<!--        </div>-->
       </div>
     </div>
-<!--    <div>-->
-<!--      <div class="align-middle text-center">-->
-<!--        <span class="rounded-md py-1 px-2 bg-green-200 text-gray-600">-->
-<!--          {{ $t('select-chat-to-messaging') }}-->
-<!--        </span>-->
-<!--      </div>-->
-<!--    </div>-->
     <vue-simple-context-menu
       ref="vueSimpleContextMenu"
       element-id="myUniqueId"
@@ -374,9 +269,11 @@ export default {
         sender: this.$auth.user.id,
         receiver: parseInt(this.$route.query.consultant_id),
         text: '',
-        file_url: null,
-        seen: false,
+        // file_url: null,
+        // seen: false,
       },
+      windowWidth: 0,
+      isEdit: false,
       currentUser: this.$cookies.get('user_info'),
       day: null,
       advice: {
@@ -401,6 +298,7 @@ export default {
   },
   async fetch() {
     try {
+
       if (this.$route.query.consultant_id) {
         await this.fetchConsultant()
       }
@@ -408,72 +306,6 @@ export default {
     }
   },
   mounted() {
-    // socjet message listen
-    this.$socket.on('message',  (res,rej) => {
-      console.log('message', res)
-      const {type, status, data} = res;
-      if (type === 'room' && status === 'created') {
-        this.joinToRoom(data.id)
-          .then(res=> {
-            this.$router.push({path: this.localePath(this.$route.path), query: {...this.$route.query, room_id: data.id}})
-            this.messages.room = data.id
-            this.$socket.emit('sendMessage', this.message)
-          })
-        const id = data.id
-        this.$store.dispatch('chats/getRooms', {
-            populate: '*',
-            filters: {
-              is_completed: false,
-              sender: {
-                id: this.currentUser.id
-              },
-              room: {
-                id: {
-                  $eq: {
-                    id
-                  }
-                }
-              }
-            }
-          })
-      } else if(type === 'chat' && status === 'created') {
-        this.$store.dispatch('chats/setMessage',data)
-      }
-    });
-    // if (this.$route.query.room_id && this.$route.query.room_id !== 'new') {
-    //   this.fetchConsultant().then(() => {
-    //     this.fetchCurrentRoom().then(() => {
-    //       this.message = {
-    //         chatroom: this.currentRoom.id,
-    //         sender: this.currentUser.id,
-    //         receiver: this.consultant.id,
-    //         text: '',
-    //         filepath: null,
-    //         seen: false,
-    //       }
-    //       this.$bridge.$emit('join_room', {
-    //         username: this.currentUser.username,
-    //         room: this.currentRoom.id,
-    //       })
-    //     })
-    //   })
-    // }
-    // if () {
-    //   this.fetchConsultant().then(() => {
-    //     this.message = {
-    //       chatroom: null,
-    //       sender: this.currentUser.id,
-    //       receiver: this.consultant.id,
-    //       text: '',
-    //       filepath: null,
-    //       seen: false,
-    //     }
-    //     this.$bridge.$emit('join_room', {
-    //       username: this.currentUser.username,
-    //       room: this.currentRoom.id,
-    //     })
-    //   })
-    // }
     if(this.$route.query.room_id !== 'new') {
       this.$store.dispatch('chats/chatmessages', {
         populate: '*',
@@ -486,36 +318,15 @@ export default {
         }
       })
     }
+
   },
   watch: {
-    '$route.query.room_id'(val,old) {
-      // this.socketDisconnector(old)
-      //   .then(res=> {
-      //     debugger
-      //     console.log(res)
-      //   })
-    //   this.socketDisconnector().then(() => {
-    //     if (this.$route.query.room_id) {
-    //       this.fetchCurrentRoom().then(() => {
-    //         this.message = {
-    //           chatroom: this.currentRoom.id,
-    //           sender: this.currentUser.id,
-    //           receiver: this.consultant.id,
-    //           text: '',
-    //           filepath: null,
-    //           seen: false,
-    //         }
-    //         this.$bridge.$emit('join_room', {
-    //           username: this.currentUser.username,
-    //           room: this.currentRoom.id,
-    //         })
-    //       })
-    //     }
-    //   })
-    },
     '$route.query.consultant_id'(val){
       this.fetchConsultant(val)
-}
+},
+    messages: (newValue, oldValue) => {
+      // console.log(newValue, oldValue, this)
+    }
   },
   computed: {
     ...mapState({
@@ -532,10 +343,45 @@ export default {
         receiver: this.consultant.id,
         sender: this.$auth.user.id
       }
-     return await this.$socket.emit('createRoom', room,  (res, rej)=> {
-        // console.log('====>>>',res.res, rej)
-        // this.$store.dispatch('chats/setActivRoom', res.res)
+     return await this.$socket.emit('createRoom', room,)
+    },
+    async fetchCurrentRoom() {
+      if (this.$route.query.room_id !== 'new') {
+        await this.$store
+          .dispatch('chats/getByIdChatrooms', {
+            id: this.$route.query.room_id,
+            params: {
+              populate: '*',
+              // 'filters[$and][0][id]': this.$route.query.room_id,
+            },
+          })
+          .then((res) => {
+            this.currentRoom = res.data
+          })
+      }
+    },
+    async socketDisconnector(id) {
+      await this.$socket.emit('leaveRoom', {
+        username: this.$auth.user.username,
+        room:this.$route.query.room_id,
       })
+      // await this.$store.dispatch('clearMessages')
+    },
+    async fetchConsultant(id) {
+      this.$store
+        .dispatch("users/get_users", {
+          populate: '*',
+          filters: {
+            id: id ?? this.$route.query.consultant_id,
+          },
+        })
+        .then((res) => {
+          console.log(res.users)
+          this.consultant = {...res.users[0]}
+        })
+    },
+    scroll (event) {
+
     },
     toRating() {
       const _currentRoom = {
@@ -572,119 +418,25 @@ export default {
       return day;
     },
     closeChatRoom() {
-      const _currentRoom = {
-        id: this.currentRoom.id,
-        data: {
-          consultant: this.currentRoom.consultant.id,
-          isCompleted: true,
-          user: this.currentRoom.user.id,
-        },
-      }
-      console.log('Current Room', _currentRoom, this.currentRoom)
-      this.$modal.show(
-        finishChatModal,
-        {
-          link: 'putChatrooms',
-          data: _currentRoom,
-        },
-        {
-          height: 'auto',
-          maxWidth: 400,
-          width: window.innerWidth <= 400 ? window.innerWidth - 30 : 400,
-          scrollable: true,
-          clickToClose: false,
-        }
-      )
-      this.$root.$once('finish-chat-modal', (item) => {
-        if (item !== 'canceled') {
-          this.sendRoomToSocket({
-            id: this.currentRoom.id,
-            data: {
-              consultant: _currentRoom.consultant,
-              isCompleted: true,
-              user: _currentRoom.user,
-            },
-          })
-        }
-      })
+      this.$emit('editRooms')
     },
     sendMessage() {
-      if (this.message.text === 0 || this.message.text.trim().length === 0) {
+    if (this.message.text === 0 || this.message.text.trim().length === 0) {
         return
-      }
-      if (this.$route.query.room_id === 'new') {
+      } else if (this.$route.query.room_id === 'new') {
         this.createRoomToSocket()
       } else {
-
-        this.joinToRoom(this.$route.query.room_id)
-          .then(res=> {
-            this.message.room = this.$route.query.room_id
-            this.$socket.emit('sendMessage', this.message)
-          })
-          .finally(() => {
-          })
-      }
-
-      // if (this.$route.query.room_id === 'new') {
-      //   this.createRoomToSocket()
-      //   this.$store
-      //     .dispatch('postChatrooms', {
-      //       data: {
-      //         consultant: this.consultant.id,
-      //         user: this.currentUser.id,
-      //         isCompleted: false,
-      //       },
-      //       query: {
-      //         populate: '*',
-      //       },
-      //     })
-      //     .then(async (res) => {
-      //       this.currentRoom = res
-      //       this.message.chatroom = res.data.id
-      //       // await this.sendRoomToSocket({
-      //       //   id: res.data.id,
-      //       //   data: {
-      //       //     consultant: res.data.consultant.data.id,
-      //       //     rate: res.data.rate,
-      //       //     title: res.data.title,
-      //       //     isCompleted: res.data.isCompleted,
-      //       //     user: res.data.user.data.id,
-      //       //     answerDuration: res.data.answerDuration,
-      //       //   },
-      //       // })
-      //       // await this.$bridge.$emit('join_room', {
-      //       //   username: this.currentUser.username,
-      //       //   room: this.currentRoom.id,
-      //       // })
-      //       await this.sendMessageToSocket({ ...this.message })
-      //       await this.$router.push({
-      //         path: this.localePath('/chats'),
-      //         query: { room_id: this.currentRoom.id, consultant_id: this.consultant.id },
-      //       })
-      //     })
-      // } else {
-      //   this.sendMessageToSocket({ ...this.message })
-      // }
-    },
-    async joinToRoom (id) {
-     return  await this.$socket.emit('joinRoom', {username: this.currentUser.username, room: id })
-    },
-    sendMessageToSocket(message) {
-      if (message.id) {
-        const _id = message.id
-        const data = { ...message }
-        delete data.id
-        const _message = {
-          id: _id,
-          data,
-        }
-        socket.emit('editMessage', _message, ({ res, rej }) => {
-          this.setMessage()
-        })
-      } else {
-        socket.emit('sendMessage', message, ({ res, rej }) => {
-          this.setMessage()
-        })
+            this.message.room = parseInt(this.$route.query.room_id)
+            if (!this.isEdit) {
+              this.$socket.emit('sendMessage', this.message)
+              this.message.text = ''
+            } else {
+              const id = this.message.id;
+              delete this.message.id
+              this.$socket.emit('editMessage', {id: id , data: this.message})
+              this.isEdit = !this.isEdit;
+              this.message.text = ''
+            }
       }
     },
     sendRoomToSocket(room) {
@@ -696,9 +448,7 @@ export default {
           id: _id,
           data,
         }
-        socket.emit('editRoom', _room, ({ res, rej }) => {
-          console.log('res', res)
-          console.log('rej', rej)
+        this.$socket.emit('editRoom', _room, ({ res, rej }) => {
         })
       } else {
         socket.emit('createRoom', room, ({ res, rej }) => {
@@ -706,41 +456,20 @@ export default {
         })
       }
     },
-    setMessage() {
-      if (this.currentRoom.unread_message && this.currentRoom.unread_message !== 0) {
-        this.fetchCurrentRoom().then(() => {
-          this.sendRoomToSocket(this.currentRoom)
-        })
-      }
-      this.message = {
-        chatroom: this.currentRoom.id,
-        sender: this.currentUser.id,
-        receiver: this.consultant.id,
-        text: '',
-        filepath: null,
-        seen: false,
-      }
-    },
     handleClick(event, item) {
       this.$refs.vueSimpleContextMenu.showMenu(event, item)
-      // console.log(this.$refs)
     },
-    //sidbar click
     optionClicked(event) {
       console.log(event)
-      if (event.option.slug === 'edit') {
-        console.log('edit', event)
-        const _message = event.item
-        this.message = {
-          room: _message.room.id,
-          sender: _message.sender.id,
-          receiver: _message.receiver.id,
-          text: _message.text,
-          filepath: _message.filepath,
-          seen: _message.seen,
-          id: _message.id,
-        }
-      } else if (event.option.slug === 'delete') {
+      const {item, option} = event
+      if (option.slug === 'edit') {
+        this.isEdit = ! this.isEdit;
+        this.message.text = item.text
+        this.message.file_url = item.file_url
+        this.message.seen = item.seen;
+        this.message.id = item.id
+      }
+      else if (event.option.slug === 'delete') {
         this.$modal.show(
           deleteModal,
           { name: 'DeleteMessage' },
@@ -752,12 +481,16 @@ export default {
             clickToClose: false,
           }
         )
+        // this.$socket.emit(
+        //   'deleteMessage',
+        //   { id: event.item.id, room: parseInt(this.$route.query.room_id)}
+        // )
         this.$root.$once('delete-modal', (item) => {
+          console.log('delete', event)
           if (item !== 'canceled') {
             this.$socket.emit(
               'deleteMessage',
-              { id: event.item.id},
-              ({ res, rej }) => {}
+              { id: event.item.id, room: parseInt(this.$route.query.room_id)}
             )
           }
         })
@@ -783,7 +516,6 @@ export default {
           }
         )
         this.$root.$once('send-media-modal', (item) => {
-          debugger
           if (item !== 'canceled') {
             this.message.file_url = item.image
             this.message.text = item.text
@@ -792,41 +524,19 @@ export default {
         })
       })
     },
-    async fetchCurrentRoom() {
-      if (this.$route.query.room_id !== 'new') {
-        await this.$store
-          .dispatch('chats/getByIdChatrooms', {
-            id: this.$route.query.room_id,
-            params: {
-              populate: '*',
-              // 'filters[$and][0][id]': this.$route.query.room_id,
-            },
-          })
-          .then((res) => {
-            this.currentRoom = res.data
-          })
-      }
+    scrollToEnd() {
+      setTimeout(() => {
+        if (this.$refs.chat) {
+          console.log('===>>>setInterval', this.$refs.chat.$el, this.$refs.chat.scrollHeight)
+          this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight
+        }
+      }, 0)
     },
-    async socketDisconnector(id) {
-     await this.$socket.emit('leaveRoom', {
-        username: this.currentUser.username,
-        room: id,
-      })
-      // await this.$store.dispatch('clearMessages')
-    },
-    async fetchConsultant(id) {
-      this.$store
-        .dispatch("users/get_users", {
-            populate: '*',
-            filters: {
-              id: id ?? this.$route.query.consultant_id,
-          },
-        })
-        .then((res) => {
-          console.log(res.users)
-          this.consultant = {...res.users[0]}
-        })
+    setWindowWidth() {
+      this.windowWidth = window.innerWidth;
+      // console.log(window.innerWidth)
     },
   },
+
 }
 </script>

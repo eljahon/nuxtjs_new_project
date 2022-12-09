@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
     <div class="px-4 my-4 flex justify-between sm:px-0 items-center">
-      <breadcrumbs :items="items" />
+      <breadcrumbs :items="items"/>
     </div>
     <div
       style="height: calc(72vh - 0px)"
@@ -129,21 +129,21 @@
                     <div class="grid grid-cols-3 ml-3">
                       <div class="col-span-2 block mb-1">
                         <p v-if="room.title !== null" class="text-sm text-gray-600">
-                          {{room.title }}
+                          {{ room.title }}
                         </p>
                         <p v-else class="text-sm text-gray-600">
-                          {{room.receiver.username}}
+                          {{ room.receiver.username }}
                         </p>
                         <div class="flex pt-2 space-x-1 w-full text-xs text-gray-500">
                           {{ room.message }}
                         </div>
                       </div>
-<!--                      <div v-if="room.unread_message !== 0" class="flex justify-end">-->
-<!--                        <p class="text-xs text-gray-100 bg-gray-400 rounded-xl py-2 px-3">-->
-<!--                          &lt;!&ndash; {{ $dayjs(room.updated_at).format('') }} &ndash;&gt;-->
-<!--&lt;!&ndash;                          {{ room.unread_message }}&ndash;&gt;-->
-<!--                        </p>-->
-<!--                      </div>-->
+                      <!--                      <div v-if="room.unread_message !== 0" class="flex justify-end">-->
+                      <!--                        <p class="text-xs text-gray-100 bg-gray-400 rounded-xl py-2 px-3">-->
+                      <!--                          &lt;!&ndash; {{ $dayjs(room.updated_at).format('') }} &ndash;&gt;-->
+                      <!--&lt;!&ndash;                          {{ room.unread_message }}&ndash;&gt;-->
+                      <!--                        </p>-->
+                      <!--                      </div>-->
                     </div>
                   </div>
                 </div>
@@ -188,11 +188,11 @@
                     <div class="grid grid-cols-3 ml-3">
                       <div class="col-span-2 block mb-1">
                         <p v-if="room.title !== null" class="text-sm text-gray-600">
-<!--                          {{ `${room.consultantID.name ? room.consultantID.name : ''} ${room.consultantID.surname ? room.consultantID.surname : ''}` }}-->
+                          <!--                          {{ `${room.consultantID.name ? room.consultantID.name : ''} ${room.consultantID.surname ? room.consultantID.surname : ''}` }}-->
                         </p>
 
                         <p v-else class="text-sm text-gray-600">
-                          {{room.receiver.username}}
+                          {{ room.receiver.username }}
                         </p>
                         <div class="flex pt-2 space-x-1 w-full text-xs text-gray-500">
                           {{ room.message }}
@@ -219,7 +219,7 @@
         </div>
         <div
           v-if="Object.keys($route.query).length === 0"
-             class="md:col-span-2 xl:col-span-3">
+          class="md:col-span-2 xl:col-span-3">
           <div class="align-middle text-center">
             <span class="rounded-md py-1 px-2 bg-green-200 text-gray-600">
               {{ $t('text.selectConsultantToMessaging') }}
@@ -227,12 +227,12 @@
           </div>
         </div>
         <div v-else class="md:col-span-2 xl:col-span-3">
-          <chat-body :state="'consultant'" />
+          <chat-body ref="chat-body" :state="'consultant'" @editRooms="editRooms"/>
         </div>
       </div>
       <div v-else class="m-4">
         <div
-            v-if="Object.keys($route.query).length === 0 && windowWidth < 768"
+          v-if="Object.keys($route.query).length === 0 && windowWidth < 768"
           class="p-4 border rounded-md shadow-md bg-white"
         >
           <div class="md:col-span-1 xl:col-span-1 col-span-1">
@@ -304,7 +304,7 @@
                   :class="$route.query.room_id === `${room.id}` ? 'bg-green-50' : 'bg-white'"
                   @click="toChatting(room, $store.state.chats.activeRooms)"
                 >
-<!--                  <span>asdadsad</span>-->
+                  <!--                  <span>asdadsad</span>-->
                   <div class="p-4 flex items-center">
                     <div class="flex-shrink-0">
                     <span class="inline-block relative">
@@ -326,23 +326,23 @@
                     >
                       <div class="grid grid-cols-3 ml-3">
                         <div class="col-span-2 block mb-1">
-                          <span>{{room}}</span>
+                          <span>{{ room }}</span>
                           <p v-if="room.title !== null" class="text-sm text-gray-600">
-                            {{room.title}}
+                            {{ room.title }}
                           </p>
                           <p v-else class="text-sm text-gray-600">
-                            {{room.receiver.username}}
+                            {{ room.receiver.username }}
                           </p>
                           <div class="flex pt-2 space-x-1 w-full text-xs text-gray-500">
                             {{ room.message }}
                           </div>
                         </div>
-<!--                        <div v-if="room.unread_message !== 0" class="flex justify-end">-->
-<!--                          <p class="text-xs text-gray-100 bg-gray-400 rounded-xl py-2 px-3">-->
-<!--                            &lt;!&ndash; {{ $tools.getDateTime(room.updated_at) }} &ndash;&gt;-->
-<!--                            {{ room.unread_message }}-->
-<!--                          </p>-->
-<!--                        </div>-->
+                        <!--                        <div v-if="room.unread_message !== 0" class="flex justify-end">-->
+                        <!--                          <p class="text-xs text-gray-100 bg-gray-400 rounded-xl py-2 px-3">-->
+                        <!--                            &lt;!&ndash; {{ $tools.getDateTime(room.updated_at) }} &ndash;&gt;-->
+                        <!--                            {{ room.unread_message }}-->
+                        <!--                          </p>-->
+                        <!--                        </div>-->
                       </div>
                     </div>
                   </div>
@@ -387,7 +387,7 @@
                       <div class="grid grid-cols-3 ml-3">
                         <div class="col-span-2 block mb-1">
                           <p v-if="room.title !== null" class="text-sm text-gray-600">
-                            {{room.title}}
+                            {{ room.title }}
                           </p>
                           <div class="flex pt-2 space-x-1 w-full text-xs text-gray-500">
                             {{ room.message }}
@@ -407,7 +407,7 @@
           </div>
         </div>
         <div v-else>
-          <chat-body :state="'consultant'" />
+          <chat-body :state="'consultant'" @editRooms="editRooms"/>
         </div>
       </div>
     </div>
@@ -415,8 +415,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import {mapState} from 'vuex'
 import chatBody from "@/components/chats/ChatBody";
+import finishChat from "@/components/modals/finish-chat";
 export default {
   name: 'Chat',
   auth: true,
@@ -428,12 +429,13 @@ export default {
   //     console.log('socket connet==>')
   //   }
   // },
-  data () {
+  data() {
     return {
-      items: [{ text: 'text.onlineConsultation', link: '/online-consultation', disabled: true }],
+      items: [{text: 'text.onlineConsultation', link: '/online-consultation', disabled: true}],
       windowWidth: 0,
       activeRooms: [],
       closedRooms: [],
+      editRoomsList:null,
       currentUser: this.$cookies.get('user_info') ?? {},
       noChatSelected: true,
       activetab: 'active',
@@ -449,11 +451,29 @@ export default {
     })
   },
   watch: {
-    "$route.query.room_id"(val,old) {
+    // "$store.state.chats.activeRooms": (value, old) => {
+    //   console.log(value, old)
+    // },
+    // '$store.state.chats.message': (newValue, oldValue) => {
+    //   console.log(newValue, oldValue, this)
+    // },
+    "$route.query.room_id"(val, old) {
       if (old !== 'new') {
         this.socketLeavRoom(old)
           .then(res => {
             this.joinToRoom(val)
+              .then(res => {
+                if (old === 'new') {
+                  this.$refs['chat-body'].sendMessage()
+                }
+              })
+          })
+      } else {
+        this.joinToRoom(val)
+          .then(res=> {
+            if (old === 'new') {
+              this.$refs['chat-body'].sendMessage()
+            }
           })
       }
       this.$store.dispatch('chats/chatmessages', {
@@ -461,24 +481,24 @@ export default {
         filters: {
           room: {
             id: {
-             $eq: val
+              $eq: val
             }
           }
         }
       })
       // sockets.emit({room_id: this.$route.query.room_id, userID: this.currentUser.id})
     },
-    finishedChatId () {
+    finishedChatId() {
       this.fetchActiveRooms()
     },
-    createRoom () {
+    createRoom() {
       this.fetchActiveRooms()
     },
-    seenMessage () {
+    seenMessage() {
       this.fetchActiveRooms()
     }
   },
-  created () {
+  created() {
     if (!process.client) {
       return
     }
@@ -489,103 +509,119 @@ export default {
       // })
     }
   },
-  async fetch () {
+  async fetch() {
     this.currentUser = this.$cookies.get('user_info')
   },
-  mounted () {
-        this.fetchActiveRooms()
-          .then((res) => {
-            this.joinSocket();
-          })
-    // console.log(this.currentUser, '=====>>')
-    this.$socket.on('joined', (res) => {
-      console.log(res,'join')
-    })
-    this.$socket.on('joinedRoom', (res)=> {
-      console.log(res)
-    })
+  async mounted() {
+    await this.fetchActiveRooms()
+      .then(async (res) => {
+        await this.joinSocket()
+          .then(async (res) => {
+            if (this.$route.query.room_id !== 'new' && this.$route.query.room_id !== undefined) {
+              await this.joinToRoom(this.$route.query.room_id)
+            }
+          });
+      })
     this.scrollToEnd()
     this.setWindowWidth();
-    },
-  updated () {
+  },
+  updated() {
     this.scrollToEnd()
   },
   destroyed() {
-    console.log('dis connects')
-    // this.socketDisconnector()
+    this.socketDisconnector()
     this.$store.dispatch('chats/clearMessage')
-    // ExampleAnalyticsService.informService('Component destroyed.')
   },
   methods: {
-    joinSocket () {
-     this.$socket.emit('join', {
-        username: this.currentUser.username ,
+    async joinSocket() {
+      await this.$socket.emit('join', {
+        username: this.currentUser.username,
         user_id: this.currentUser.id,
       })
     },
-    async socketLeavRoom (id) {
+    async socketLeavRoom(id) {
       await this.$socket.emit('leaveRoom', {
         username: this.currentUser.username,
         room: id,
+      }, ({res}) => {
+        console.log(res)
       })
     },
-    async joinToRoom (id) {
-      await this.$socket.emit('joinRoom', {username: this.currentUser.username, room: id })
+    async joinToRoom(id) {
+      await this.$socket.emit('joinRoom', {username: this.currentUser.username, room: id})
     },
-    async socketDisconnector() {
-      await this.$socket.emit("leave", {
-        username: this.currentUser.username,
-        room: this.$route.query.room_id,
-      }, (res) => {
-        console.log()
+    socketDisconnector() {
+      this.$socket.emit("leave", {
+        username: this.$auth.user.username,
+        user_id: this.$auth.user.id,
       });
-      await this.$store.dispatch("socket/clearMessages");
+      this.$store.dispatch("socket/clearMessages");
     },
-    scrollToEnd () {
+    editRooms () {
+      console.log('=====>>>> isCompletant')
+      // const _currentRoom = {
+      //   id: this.currentRoom.id,
+      //   data: {
+      //     consultant: this.currentRoom.consultant.id,
+      //     isCompleted: true,
+      //     user: this.currentRoom.user.id,
+      //   },
+      // }
+      // console.log('Current Room', _currentRoom, this.currentRoom)
+      this.$modal.show(
+        finishChat,
+        {
+          link: 'putChatrooms',
+          data: this.editRoomsList,
+        },
+        {
+          height: 'auto',
+          maxWidth: 400,
+          width: window.innerWidth <= 400 ? window.innerWidth - 30 : 400,
+          scrollable: true,
+          clickToClose: false,
+        }
+      )
+      // this.$root.$once('finish-chat-modal', (item) => {
+      //   if (item !== 'canceled') {
+      //     this.sendRoomToSocket({
+      //       id: this.currentRoom.id,
+      //       data: {
+      //         consultant: _currentRoom.consultant,
+      //         isCompleted: true,
+      //         user: _currentRoom.user,
+      //       },
+      //     })
+      //   }
+      // })
+      // console.log(this.currentRoom, '====>>>>>')
+    },
+    scrollToEnd() {
       setTimeout(() => {
         if (this.$refs.chat) {
           this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight
         }
       }, 0)
     },
-    changeTab (status) {
+    changeTab(status) {
       this.activetab = status;
       if (status === 'active') {
         this.fetchActiveRooms()
       }
       this.fetchClosedRooms()
     },
-    setWindowWidth () {
+    setWindowWidth() {
       this.windowWidth = window.innerWidth;
       // console.log(window.innerWidth)
     },
-    toChatting (data, list) {
-      // debugger
-      console.log(data, list)
+    toChatting(data, list) {
+      this.editRoomsList = data;
       this.noChatSelected = false;
-      // this.$store.dispatch('chats/clearMessage')
-      this.$router.push({ query: { room_id: data.id, consultant_id: data.receiver.id } })
+      this.$store.dispatch('chats/clearMessage')
+      this.$router.push({query: {room_id: data.id, consultant_id: data.receiver.id}})
     },
-
-    // setRooms(data, status) {
-    //   console.log(data)
-    //   if (status === 'active') {
-    //     data.forEach(element => {
-    //       if (element.is_completed) {
-    //         // debugger
-    //         this.activeRooms.push(element)
-    //       }
-    //     });
-    //   } else {
-    //     data.forEach(element => {
-    //       if (element.isCompleted && element.unread_message === 0) {
-    //         this.closedRooms.push(element)
-    //       }
-    //     });
-    //   }
-    // },
-    async fetchActiveRooms () {
-       this.$store
+    async fetchActiveRooms() {
+      return this.$store
         .dispatch('chats/getRooms', {
           populate: '*',
           filters: {
@@ -602,7 +638,7 @@ export default {
           // this.activeRooms = res
         })
     },
-    async fetchClosedRooms () {
+    async fetchClosedRooms() {
       await this.$store
         .dispatch('chats/getRooms', {
           populate: '*',
@@ -643,16 +679,19 @@ export default {
 .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
   border-radius: 0.25rem;
 }
+
 @media screen and (max-width: 1024px) {
   .responsive {
     height: calc(100vh - 25px);
   }
 }
+
 @media screen and (min-width: 375px) {
   .responsive {
     height: calc(78vh - 25px);
   }
 }
+
 @media screen and (min-width: 375px) {
   .responsive {
     height: calc(80vh - 25px);

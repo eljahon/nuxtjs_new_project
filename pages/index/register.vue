@@ -113,9 +113,9 @@
                 "
                 >
                 <template v-if="classes.dirty || classes.validated">
-                  <span v-for="error in errors" :key="error" class="text-red-600 text-xs">{{
-                      error
-                    }}</span>
+<!--                  <span v-for="error in errors" :key="error" class="text-red-600 text-xs">{{-->
+<!--                      error-->
+<!--                    }}</span>-->
                 </template>
               </ValidationProvider>
               <ValidationProvider
@@ -343,40 +343,62 @@ export default {
         delete this.user.email
         delete this.user.password
       }
-      await this.$axios.post('/auth/local/register', this.user).then(async (res) => {
-        if (this.isEmail) {
-          this.$snotify.info('Logging in...')
-          localStorage.setItem('local', 'Bearer ' + res.jwt)
-          await this.$auth.setToken('local', 'Bearer ' + res.jwt)
-          await this.$axios.setHeader('Authorization', 'Bearer ' + res.jwt)
-          await this.$auth.ctx.app.$axios.setHeader('Authorization', 'Bearer ' + res.jwt)
-          localStorage.setItem('user_info', JSON.stringify(res.user))
-          await this.$auth.setUser(res.user)
-          await this.$snotify.success('Successfully Logged In')
-          this.loading = false
-          this.onClose()
-          return
-        }
-        if (res.data === false) {
-          this.confirmCode({ username: this.user.phone, isOtpSuccess: false, isLogin: null })
-          return
-        }
-        this.confirmCode({ username: res.data.user.phone, isOtpSuccess: null, isLogin: null })
-        // eslint-disable-next-line no-console
-      }).catch((e) => { console.error(e) })
+      if (this.phoneOrEmail.includes('@') > 0 && this.isAgree) {
+        const userData = {
+          email: this.user.email,
+          username: this.user.surname,
+          password: this.user.password
+        };
+        const newuser =  await this.$axios.post('/auth/local/register', userData);
+        const id = newuser.user.id;
+        const jwt = newuser.jwt;
+        const userInfo = {
+          "phone": this.user.email,
+          "name": this.user.name,
+          "surname":this.user.surname,
+          "locale": this.$i18n.locale,
+          otp_code: null,
+          avatar: null,
+          description: null,
+          position: null,
+          about: null,
+          consultation_category: null,
+        };
+        const user_info = await this.$axios.post('userinfos', {data: userInfo})
+            .then(async res=> {
+              console.log('res ===>', res)
+          if (this.isEmail && newuser.jwt && res.data.id) {
+            const data = await this.$axios.put(`users/${id}`, {
+              data: {
+                userinfo: res.data.id,
+                role: 4,
+                branch: 1
+              }
+            }, {
+              headers: {
+                       ['Authorization']: `Bearer ` +jwt
+              }
+            })
+            if (data) {
+              this.$router.push({path: this.localePath('/login')})
+            }
+          }
+        })
+      }
+
     },
     toTermsOfService () {
       this.$emit('close')
-      this.$modal.show(
-        termsOfService,
-        { status: 'terms-of-service' },
-        {
-          height: 700,
-          maxWidth: 700,
-          width: window.innerWidth <= 700 ? window.innerWidth - 10 : 700,
-          acrollable: true
-        }
-      )
+      // this.$modal.show(
+      //   termsOfService,
+      //   { status: 'terms-of-service' },
+      //   {
+      //     height: 700,
+      //     maxWidth: 700,
+      //     width: window.innerWidth <= 700 ? window.innerWidth - 10 : 700,
+      //     acrollable: true
+      //   }
+      // )
     },
     confirmCode (user) {
       this.$emit('close')

@@ -18,8 +18,9 @@
             <p v-if="consultant.userinfo.consultation_category !== null" class="text-gray-600 text-xs md:text-left line-clamp-1 text-center m-2">
               {{ consultant.userinfo.consultation_category.title ? consultant.userinfo.consultation_category.title : '' }}
             </p>
+            <pre v-else class="text-gray-600 text-xs md:text-left line-clamp-1 text-center m-2"> {{'         '}}</pre>
             <button type="button" class="lg:hidden focus:outline-none flex rounded-md rounded-t-none text-sm text-white bg-light-orange w-full justify-center py-3" @click="toNewChatRoom(consultant)">
-              {{ $t('text.getConsultation') }}
+<!--              {{ $t('text.getConsultation') }}-->
             </button>
           </div>
 
@@ -33,8 +34,9 @@
               <p v-if="consultant.userinfo.consultation_category !== null" class="text-sm text-green-600">
                 {{ consultant.userinfo.consultation_category.title ? consultant.userinfo.consultation_category.title : '' }}
               </p>
+              <pre v-else class="text-sm text-green-600">{{'     '}}</pre>
               <div class="lg:flex hidden justify-center">
-                <button type="button" class="flex justify-center items-center p-2 mt-3 border border-transparent text-xs leading-4 font-medium rounded-md text-light-orange bg-orange-50 focus:outline-none" @click="toNewChatRoom(consultant)">
+                <button v-if="$auth.user.id === 3" type="button" class="flex justify-center items-center p-2 mt-3 border border-transparent text-xs leading-4 font-medium rounded-md text-light-orange bg-orange-50 focus:outline-none" @click="toNewChatRoom(consultant)">
                   {{ $t('text.getConsultation') }}
                   <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />

@@ -27,6 +27,9 @@ const tools = {
       }
     }
   },
+  newUrl (name) {
+    return `${process.env.NUXT_APP_BASE_NEW_IMG_URL}${name}`
+  },
   cropUrl (url, word) {
     if (word && word.length > 0) {
       return url.substring(word.length)
