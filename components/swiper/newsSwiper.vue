@@ -1,6 +1,7 @@
 <template>
   <div class="news">
     <swiper ref="swiper" class="swiper" :options="newsOption">
+      <client-only>
       <swiper-slide
         v-for="(info, index) in news"
         :key="index"
@@ -15,6 +16,7 @@
           </div>
         </nuxt-link>
       </swiper-slide>
+      </client-only>
     </swiper>
 
     <div class="absolute group top-1/2 lg:flex hidden justify-between inset-x-0">

@@ -55,6 +55,7 @@
     </nuxt-link>
 
     <swiper v-if="products.length > 1" ref="swiper" class="swiper" :options="tradingOption">
+      <client-only>
       <swiper-slide
         v-for="(product, index) in (products.length <= 4 && products.length >= 2 ? products.slice(1, products.length) : products.slice(1,4))"
         :key="index"
@@ -126,6 +127,7 @@
           </div>
         </nuxt-link>
       </swiper-slide>
+      </client-only>
     </swiper>
     <div class="absolute group top-1/2 lg:flex hidden justify-between inset-x-0">
       <div

@@ -1,5 +1,6 @@
 <template>
   <swiper ref="swiper" class="swiper mt-4" :options="profileOption">
+    <client-only>
     <swiper-slide>
       <router-link :to="{path: localePath('/my-products')}" class="flex items-center justify-center shadow-md w-full font-medium border rounded-md bg-white py-2 text-gray-600">
         <i class="bx bx-clipboard text-lg" />
@@ -8,6 +9,7 @@
         </p>
       </router-link>
     </swiper-slide>
+    </client-only>
     <swiper-slide>
       <router-link :to="{path: localePath('/chats')}" class="flex items-center justify-center shadow-md bg-white border rounded-md font-medium border-b py-2 text-gray-600">
         <i class="bx bx-message-rounded-dots text-lg" />

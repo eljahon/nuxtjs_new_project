@@ -1,6 +1,7 @@
 <template>
   <div class="relative information">
     <swiper ref="swiper" class="swiper" :options="informationOption">
+      <client-only>
       <swiper-slide
         v-for="(info, index) in information"
         :key="index"
@@ -20,6 +21,7 @@
         <!-- user full data inside null or undefined have  -->
         <!-- </div> -->
       </swiper-slide>
+      </client-only>
     </swiper>
     <div class="absolute group top-1/2 lg:flex hidden justify-between inset-x-0">
       <div

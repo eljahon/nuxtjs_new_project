@@ -1,6 +1,7 @@
 <template>
   <div class="consultation">
     <swiper ref="swiper" class="swiper" :options="consultantOption">
+      <client-only>
       <swiper-slide
         v-for="(consultant, index) in consultation"
         :key="index"
@@ -48,6 +49,7 @@
           </div>
         </div>
       </swiper-slide>
+    </client-only>
     </swiper>
     <div class="absolute group top-1/2 lg:flex hidden justify-between inset-x-0">
       <div

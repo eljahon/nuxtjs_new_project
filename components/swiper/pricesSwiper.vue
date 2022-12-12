@@ -1,6 +1,7 @@
 <template>
   <div class="consultants">
     <swiper ref="swiper" class="swiper" :options="priceOption">
+      <client-only>
       <swiper-slide
         v-for="(price, index) in prices"
         :key="index"
@@ -168,6 +169,7 @@
           </div>
         </div>
       </swiper-slide>
+      </client-only>
     </swiper>
     <router-link :to="{path: localePath('/prices')}">
       <button class="text-white bg-green-600 text-base md:hidden flex justify-center rounded-md w-full mt-3 py-2">
