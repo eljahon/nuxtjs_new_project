@@ -27,18 +27,19 @@
               >
             </div>
             <div class="p-3 col-span-2">
-              <h3 class="text-gray-600 font-medium text-base">
+              <h3 v-if="consultant.userinfo.name && consultant.userinfo.surname &&consultant.userinfo" class="text-gray-600 font-medium text-base">
                 {{ `${consultant.userinfo.name ? consultant.userinfo.name : ''} ${consultant.userinfo.surname ? consultant.userinfo.surname : ''}` }}
               </h3>
-              <div v-if="consultant.userinfo.consultation_category  !== null" class="text-green-600 text-sm mb-3 mt-2 line-clamp-1">
-                {{ consultant.userinfo.consultation_category.title ? consultant.userinfo.consultation_category.title : '' }}
+              <div v-if="consultant.userinfo.consultation_category && consultant.userinfo && consultant.userinfo.consultation_category.title" class="text-green-600 text-sm mb-3 mt-2 line-clamp-1">
+                {{ consultant.userinfo.consultation_category.title }}
               </div>
-              <pre v-else class="text-green-600 text-sm mb-3 mt-2 line-clamp-1">
+              <pre  v-else class="text-green-600 text-sm mb-3 mt-2 line-clamp-1">
                 {{ consultant.userinfo.consultation_category ? consultant.userinfo.consultation_category.title ?  consultant.userinfo.consultation_category.title : '     ' : ' ' }}
               </pre>
               <div class="flex items-center mt-2 sm:justify-center justify-start">
+<!--                {{$auth}}-->
                 <button
-                  v-if="$auth.user.id !== 3"
+                  v-if="($auth?.loggedIn && $auth?.user?.id !== 3)"
                   type="button"
                   class="
                     p-2

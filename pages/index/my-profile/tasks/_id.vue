@@ -165,7 +165,7 @@ export default {
     if (!process.client) {
       return
     }
-    this.currentUser = JSON.parse(localStorage.getItem('user_info'))
+    this.currentUser = this.$cookies.get('user_info')
     this.avatar = this.currentUser.avatar ? this.currentUser.avatar : require('/assets/images/person/avatar.jpg')
   },
   mounted() {

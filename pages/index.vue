@@ -455,7 +455,7 @@ export default {
     },
     async logOut() {
       this.isProfileOpened = !this.isProfileOpened;
-      await localStorage.clear();
+      // await this.$cookies.remove();
       await this.$cookies.remove('user_info');
       await this.$auth.logout();
       await this.$router.push({path: this.localePath('/')})

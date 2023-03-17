@@ -116,6 +116,7 @@ export default {
   },
   methods: {
     async fetchConsultation() {
+    try {
       this.loading = true;
       const _filters = {
         role: {
@@ -150,25 +151,30 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    } catch (err) {
+      this.loading = false;
+    }
     },
     async fetchConsultandCategoriy() {
-      await this.$store
-        .dispatch("users/get_users_categoriy", {
-          populate: "*",
-          locale: this.$i18n.locale,
-        })
-        .then((res) => {
-          const _sidebar = res.map((el) => {
-            return {
-              ...el,
-              id:
-                el.locale === "en"
-                  ? el.id
-                  : this.$tools.checkLocalizations(el.localizations, "en").id,
-            };
-          });
-          this.$store.dispatch("sidebar/setSidebar", _sidebar);
-        });
+     try {
+       await this.$store
+         .dispatch("users/get_users_categoriy", {
+           populate: "*",
+           locale: this.$i18n.locale,
+         })
+         .then((res) => {
+           const _sidebar = res.map((el) => {
+             return {
+               ...el,
+               id:
+                 el.locale === "en"
+                   ? el.id
+                   : this.$tools.checkLocalizations(el.localizations, "en").id,
+             };
+           });
+           this.$store.dispatch("sidebar/setSidebar", _sidebar);
+         });
+     } catch (err) {}
     },
     newConsultation() {
       // this.$modal.show(

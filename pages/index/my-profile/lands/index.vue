@@ -580,7 +580,7 @@ export default {
         published: e.published,
         search_id: e.search_id,
         item_type: "PSScene",
-        user: JSON.parse(localStorage.getItem("user_info")).id,
+        user: JSON.parse(this.$cookies.get("user_info")).id,
       };
       this.$store.dispatch("planet/planetOrder", _data);
     },
@@ -652,7 +652,7 @@ export default {
       this.$router.push({ path: this.localePath("/my-profile/lands/new") });
     },
     async fetchFields() {
-      const currentUser = JSON.parse(localStorage.getItem("user_info"));
+      const currentUser = this.$cookies.get("user_info");
       const _ = {
         "_where[0][user.id]": currentUser.id,
         _sort: "updated_at:DESC",

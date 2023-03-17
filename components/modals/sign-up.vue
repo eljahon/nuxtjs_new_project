@@ -361,7 +361,7 @@ export default {
             // await this.$auth.setRefreshToken('local', res.data.refresh)
             await this.$axios.setHeader('Authorization', 'Bearer ' + res.data.jwt)
             await this.$auth.ctx.app.$axios.setHeader('Authorization', 'Bearer ' + res.data.jwt)
-            localStorage.setItem('user_info', JSON.stringify(res.data.user))
+            this.$cookies.set('user_info', res.data.user)
             await this.$auth.setUser(res.data.user)
             await this.$snotify.success('Successfully Logged In')
             this.loading = false

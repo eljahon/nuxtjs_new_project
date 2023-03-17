@@ -127,7 +127,7 @@
             </div>
             <button
               type="submit"
-              :disabled="invalid"
+              :disabled="loading"
               class="
                 w-full
                 flex
@@ -172,7 +172,7 @@
 // import confirmCodeModal from '~/modals/confirm-code'
 // import SignIn from "@/components/modals/sign-in";
 export default {
-  name: 'Login pages',
+  name: 'Login_pages',
   auth: false,
   page: {
     title: 'Login',
@@ -232,6 +232,7 @@ export default {
     async tryToLogIn () {
       this.authError = ''
       this.loading = true
+    try {
       if (this.auth.identifier.includes('+') > 0) {
         this.auth.identifier = this.auth.identifier.substring(1)
       }
@@ -253,7 +254,7 @@ export default {
             } else {
               this.$router.push({path: this.localePath('/')})
             }
-              // await this.$snotify.success('Successfully Logged In')
+            // await this.$snotify.success('Successfully Logged In')
             // this.loading = false
             // if (this.$route.query.from === 'consultant') {
             //   this.$store
@@ -322,6 +323,9 @@ export default {
             this.loading = false
           })
       }
+    } catch (err) {
+      this.loading = false;
+    }
     },
     confirmCode (user) {
       this.$emit('close')

@@ -155,8 +155,8 @@ export default {
   },
   methods: {
     async logOut () {
-      await localStorage.removeItem('local')
-      await localStorage.removeItem('user_info')
+      await this.$cookies.remove('local')
+      await this.$cookies.remove('user_info')
       await this.$auth.logout()
     },
     getBase64 (img, callback) {

@@ -14,7 +14,7 @@ export default function ({ $axios,$cookies, redirect, $auth, app }) {
     if (code === 400) {
 
     } else if (code === 401) {
-       localStorage.clear();
+       // localStorage.clear();
        app.$cookies.remove('user_info');
        app.$auth.logout();
     }

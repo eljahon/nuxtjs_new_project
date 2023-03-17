@@ -336,7 +336,7 @@ export default {
   },
   watch: {
     "$route.query.room_id"(val) {
-      this.currentUser = JSON.parse(localStorage.getItem("user_info"));
+      this.currentUser = this.$cookies.get("user_info");
       this.socketDisconnector().then(() => {
         this.fetchData().then(() => {
           this.fetchCurrentRoom().then(() => {
@@ -351,7 +351,7 @@ export default {
     if (!process.client) {
       return;
     }
-    this.currentUser = JSON.parse(localStorage.getItem("user_info"));
+    this.currentUser = this.$cookies.get("user_info");
   },
   beforeMount() {},
   mounted() {

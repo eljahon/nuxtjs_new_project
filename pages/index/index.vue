@@ -224,28 +224,32 @@ export default {
     };
   },
   async fetch() {
-    await this.fetchNews();
-    // await this.fetchTradingposts();
+  try{
     await this.fetchPricelists();
+    await this.fetchNews();
     await this.fetchConsultation();
     await this.fetchUserFullInfo();
+    // await this.fetchTradingposts();
+  } catch (err) {}
   },
   mounted() {
 
   },
   methods: {
     async fetchNews() {
-      await this.$store.dispatch("news/get_news_list", {
-        populate: "*",
-        locale: this.$i18n.locale,
-        pagination: {
-          page: 1,
-          pageSize: 5,
-        },
-        sort: {
-          createdAt: "DESC",
-        },
-      });
+      try {
+        await this.$store.dispatch("news/get_news_list", {
+          populate: "*",
+          locale: this.$i18n.locale,
+          pagination: {
+            page: 1,
+            pageSize: 5,
+          },
+          sort: {
+            createdAt: "DESC",
+          },
+        });
+      } catch (err) {}
     },
     // async fetchTradingposts() {
     //   await this.$store.dispatch("trading/get_trading_posts_list", {
@@ -261,50 +265,56 @@ export default {
     //   });
     // },
     async fetchConsultation() {
-      await this.$store
-        .dispatch("users/get_users", {
-          populate:
-            "userinfo, userinfo.localizations, userinfo.consultation_category, userinfo.consultation_category.localizations",
-          locale: this.$i18n.locale,
-          start: 0,
-          limit: 5,
-          sort: {
-            createdAt: "DESC",
-          },
-          filters: {
-            role: {
-              id: 3,
-            },
-            blocked: false,
-          },
-        })
-        .then((res) => {
-        });
+     try {
+       await this.$store
+         .dispatch("users/get_users", {
+           populate:
+             "userinfo, userinfo.localizations, userinfo.consultation_category, userinfo.consultation_category.localizations",
+           locale: this.$i18n.locale,
+           start: 0,
+           limit: 5,
+           sort: {
+             createdAt: "DESC",
+           },
+           filters: {
+             role: {
+               id: 3,
+             },
+             blocked: false,
+           },
+         })
+         .then((res) => {
+         });
+     } catch (err) {}
     },
     async fetchPricelists() {
-      await this.$axios
-        .get("pricelists", {
-          params: {
-            populate: "*",
-            locale: this.$i18n.locale,
-          },
-        })
-        .then((res) => {
-          // console.log('===>>>pricelists', res)
-        });
+     try {
+       await this.$axios
+         .get("pricelists", {
+           params: {
+             populate: "*",
+             locale: this.$i18n.locale,
+           },
+         })
+         .then((res) => {
+           // console.log('===>>>pricelists', res)
+         });
+     } catch (err) {}
     },
     async fetchUserFullInfo() {
-      await this.$store.dispatch("userFullInfo/get_user_full_infor", {
-        populate: "*",
-        locale: this.$i18n.locale,
-        sort: {
-          createdAt: "DESC",
-        },
-        pagination: {
-          page: 1,
-          pageSize: 5,
-        },
-      });
+try {
+  await this.$store.dispatch("userFullInfo/get_user_full_infor", {
+    populate: "*",
+    locale: this.$i18n.locale,
+    sort: {
+      createdAt: "DESC",
+    },
+    pagination: {
+      page: 1,
+      pageSize: 5,
+    },
+  });
+} catch (err) {}
     },
   },
 };

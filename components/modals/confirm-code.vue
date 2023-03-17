@@ -234,11 +234,11 @@ export default {
     },
     async someMethods (res) {
       this.$snotify.info('Logging in...')
-      localStorage.setItem('local', 'Bearer ' + res.jwt)
+      this.$cookies.set('local', 'Bearer ' + res.jwt)
       await this.$auth.setToken('local', 'Bearer ' + res.jwt)
       await this.$axios.setHeader('Authorization', 'Bearer ' + res.jwt)
       await this.$auth.ctx.app.$axios.setHeader('Authorization', 'Bearer ' + res.jwt)
-      localStorage.setItem('user_info', JSON.stringify(res.user))
+      this.$cookies.set('user_info', res.user)
       await this.$auth.setUser(res.user)
       await this.$snotify.success('Successfully Logged In')
       this.loading = false
